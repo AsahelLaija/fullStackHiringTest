@@ -1,5 +1,5 @@
 *.sqlite
-
+/db/*.sqlite3
 # Created by https://www.toptal.com/developers/gitignore/api/windows,macos,linux,vim,emacs,intellij,visualstudiocode,node,react
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,linux,vim,emacs,intellij,visualstudiocode,node,react
 
