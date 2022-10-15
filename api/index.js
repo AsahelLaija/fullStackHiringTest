@@ -1,26 +1,13 @@
 const path = require('path');
 const express = require("express");
 const sqlite = require('sqlite3').verbose();
-const DBSOURCE = "db.sqlite";
 const bodyParser = require('body-parser');
 const db = require("./database.js");
 
 const PORT = process.env.PORT || 3001;
-
 const app = express();
 
 let sql;
-
-/*
-const db = new sqlite.Database(DBSOURCE, sqlite.OPEN_READWRITE, (err) => {
-  if (err) {
-    return console.error(err);
-  } else {
-    console.log('connected to SQLite server')
-  }
-});
-*/
-
 app.use(bodyParser.json())
 
 app.listen(PORT, () => {
@@ -42,7 +29,6 @@ const EQUIPMENT_TYPES = [
     "Other"
 ];
 
-/*
 app.get("/api/equipment_types", (req, res) => {
     res.json(EQUIPMENT_TYPES);
 });
@@ -56,7 +42,6 @@ app.get("/api/departments", (req, res) => {
         }
     })
 });
-*/
 
 app.post('/api/inbound_leads', (req, res) => {
   try{

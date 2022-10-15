@@ -32,9 +32,7 @@ function Form() {
       body: JSON.stringify(forms),
     }).then(() => {
       return (
-	<div>
-	  <p> Welcome </p>
-	</div>
+	alert("success")
       );
     }).catch ((error) => {
       alert("fail );")
