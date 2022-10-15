@@ -23,7 +23,7 @@ const CREATE_DEPARTMENTS = `
         email TEXT
     );
 `;
-const db = new sqlite.Database(DBSOURCE, sqlite.OPEN_READWRITE, (err) => {
+const db = new sqlite.Database(DBSOURCE, (err) => {
   if (err) {
     return console.error(err);
     throw err;
