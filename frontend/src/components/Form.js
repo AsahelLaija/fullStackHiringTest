@@ -1,50 +1,112 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-//import { useHistory } from "react-router";
 
 function Form() {
-  const [name, setName] = useState("Asahel Laija");
-  const [email, setEmail] = useState("asahellaija@gmail.com");
-  const [phone, setPhone] = useState(7853178080);
-  const [address, setAddress] = useState("2110 Mike Pl");
-  const [state, setState] = useState("Kansas");
-  const [city, setCity] = useState("Manhattan");
-  const [zip_code, setZip_code] = useState("66502");
-  const [equipment_type, setEquipment_type] = useState("Vehicle");
-  const [description, setDescription] = useState("small vehicle 4 cyl. 2L");
-  const [estimated_value, setEstimated_value] = useState(1000);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    state: '',
+    city: '',
+    zip_code: '',
+    equipment_type: '',
+    description: '',
+    estimated_value: '',
+  })
+
+  const [formError, setFormError] = useState({})
+  const onChangeHandler = (event) => {
+    if (event.target.name === 'languages') {
+
+      let copy = { ...formData }
+
+      if (event.target.checked) {
+        copy.languages.push(event.target.value)
+      } else {
+        copy.languages = copy.languages.filter(el => el !== event.target.value)
+      }
+
+      setFormData(copy)
+
+    } else {
+      setFormData(() => ({
+        ...formData,
+        [event.target.name]: event.target.value
+      }))
+    }
+  }
+
   let navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const validateForm = () => {
+    let err = {}
 
+    if (formData.name === '') {
+      err.name = 'Username required!'
+    }
+
+    if (formData.email === '' && formData.phone === ''){
+      err.email = 'Email required! or Phone required!';
+      err.phone = 'Phone required! or Email required!'
+    } else if (formData.email !== '' && formData.phone === ''){
+      let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+      if (!regex.test(formData.email)) {
+        err.email = 'Email not valid!'
+      } 
+    } else if (formData.email === '' && formData.phone !== ''){
+    }
+
+    if (formData.state === '') {
+      err.state = 'State required!';
+    } 
+    if (formData.equipment_type === '') {
+      err.equipment_type = 'Equipment type required!';
+    }
+
+    if (formData.description === '') {
+      err.description = 'Description required!'
+    }
+
+    setFormError({ ...err })
+    //console.log(setFormError)
+
+    return Object.keys(err).length < 1;
+  }
+
+  const handleSubmit = (event) => {
     event.preventDefault();
-    const forms = {
-      name,
-      email,
-      phone,
-      address,
-      state,
-      city,
-      zip_code,
-      equipment_type,
-      description,
-      estimated_value,
-    };
-    fetch("/api/inbound_leads", {
-      crossDomain: true,
-      mode: "cors",
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(forms),
-    }).then((response) => {
-      if(response.status === 200) {
-	return navigate("/success");
-      } else {
-	return navigate("/fail");
-      }
-    }).catch ((error) => {
-      alert("fail );")
-    })
+    //console.log("Form Data: ", formData);
+    let isValid = validateForm()
+    /*
+    if (isValid) {
+      alert('Submitted')
+      //API call to server
+    } else {
+      alert('In-Valid Form')
+    }
+    */
+    if(isValid) {
+      fetch("/api/inbound_leads", {
+	crossDomain: true,
+	mode: "cors",
+	method: "POST",
+	headers: { "Content-Type": "application/json" },
+	body: JSON.stringify(formData),
+      }).then((response) => {
+	if(response.status === 200) {
+	  return navigate("/success");
+	} else {
+	  return navigate("/fail");
+	}
+      }).catch ((error) => {
+	alert("fail );")
+      });
+    } else {
+      alert('please fill the form correctly')
+    }
+
   };
 
   return (
@@ -57,37 +119,41 @@ function Form() {
               <label>Name</label>
               <input
                 type="text"
-                required
-                value={name}
-                onChange={(event) => setName(event.target.value)}
+		name="name"
+                value={formData.name}
+                onChange={onChangeHandler}
               />
+	      <span className='non-valid'>{formError.name}</span>
             </div>
 
             <div className="inputBox">
               <label>Email</label>
               <input
                 type="email"
-                required
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
+		name="email"
+                value={formData.email}
+                onChange={onChangeHandler}
               />
+	      <span className='non-valid'>{formError.email}</span>
             </div>
 
             <div className="inputBox">
               <label>Phone</label>
               <input
                 type="number"
-                required
-                value={phone}
-                onChange={(event) => setPhone(event.target.value)}
+		name="phone"
+                value={formData.phone}
+                onChange={onChangeHandler}
               />
+	      <span className='non-valid'>{formError.phone}</span>
             </div>
             <div className="inputBox">
               <label>Address</label>
               <input
                 type="text"
-                value={address}
-                onChange={(event) => setAddress(event.target.value)}
+		name="address"
+                value={formData.address}
+                onChange={onChangeHandler}
               />
             </div>
 
@@ -95,10 +161,11 @@ function Form() {
               <label>State</label>
               <input
                 type="text"
-                required
-                value={state}
-                onChange={(event) => setState(event.target.value)}
+		name="state"
+                value={formData.state}
+                onChange={onChangeHandler}
               />
+	      <span className='non-valid'>{formError.state}</span>
             </div>
           </div>
           <div className="col">
@@ -106,16 +173,18 @@ function Form() {
               <label>city</label>
               <input
                 type="text"
-                value={city}
-                onChange={(event) => setCity(event.target.value)}
+		name="city"
+                value={formData.city}
+                onChange={onChangeHandler}
               />
             </div>
             <div className="inputBox">
               <label>Postal Code</label>
               <input
                 type="text"
-                value={zip_code}
-                onChange={(event) => setZip_code(event.target.value)}
+		name="zip_code"
+                value={formData.zip_code}
+                onChange={onChangeHandler}
               />
             </div>
             <h3 className="title">Asset Information</h3>
@@ -123,11 +192,12 @@ function Form() {
             <div className="inputBox">
               <label>type</label>
               <select
-			  	className="select"
-                required
-                value={equipment_type}
-                onChange={(event) => setEquipment_type(event.target.value)}
+		className="select"
+		name="equipment_type"
+                value={formData.equipment_type}
+                onChange={onChangeHandler}
               >
+                <option>choose</option>
                 <option value="Heavy/construction equipment">
                   Heavy/construction equipment
                 </option>
@@ -136,23 +206,27 @@ function Form() {
                 <option value="Government">Government</option>
                 <option value="Other">Other</option>
               </select>
+	      <span className='non-valid'>{formError.equipment_type}</span>
             </div>
 
             <div className="inputBox">
               <label>Description</label>
               <textarea
                 type="text"
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
+		name="description"
+                value={formData.description}
+                onChange={onChangeHandler}
               />
+	      <span className='non-valid'>{formError.description}</span>
             </div>
 
             <div className="inputBox">
               <label>Estimated Value</label>
               <input
                 type="number"
-                value={estimated_value}
-                onChange={(event) => setEstimated_value(event.target.value)}
+		name="estimated_value"
+                value={formData.estimated_value}
+                onChange={onChangeHandler}
               />
             </div>
           </div>

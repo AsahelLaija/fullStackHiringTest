@@ -159,6 +159,11 @@
     border-radius: 10px;
 }
 
+.non-valid{
+  color: red;
+}
+
+/*
 @media (max-width: 800px) {
     .navbar {
         flex-direction: column;
@@ -191,3 +196,4 @@
         display: flex;
     }
 }
+*/
