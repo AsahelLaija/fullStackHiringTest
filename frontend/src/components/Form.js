@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+//import { useHistory } from "react-router";
 
 function Form() {
   const [name, setName] = useState("Asahel Laija");
@@ -11,8 +13,10 @@ function Form() {
   const [equipment_type, setEquipment_type] = useState("Vehicle");
   const [description, setDescription] = useState("small vehicle 4 cyl. 2L");
   const [estimated_value, setEstimated_value] = useState(1000);
+  let navigate = useNavigate();
 
   const handleSubmit = (event) => {
+
     event.preventDefault();
     const forms = {
       name,
@@ -27,13 +31,17 @@ function Form() {
       estimated_value,
     };
     fetch("/api/inbound_leads", {
+      crossDomain: true,
+      mode: "cors",
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(forms),
-    }).then(() => {
-      return (
-	alert("success")
-      );
+    }).then((response) => {
+      if(response.status === 200) {
+	return navigate("/success");
+      } else {
+	return navigate("/fail");
+      }
     }).catch ((error) => {
       alert("fail );")
     })

@@ -4,7 +4,7 @@ const sqlite = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
 const db = require("./database.js");
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8080;
 const app = express();
 
 let sql;
